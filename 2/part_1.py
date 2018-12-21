@@ -1,7 +1,7 @@
 def readFile():
     try:
         with open('input.txt','r') as file:
-            return [line for line in file]
+            return file.read().splitlines()
     finally:
         file.close()
 
