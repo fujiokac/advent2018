@@ -1,7 +1,6 @@
-import collections
 import re
 
-REGEX = re.compile(r'#([0-9]+) @ ([0-9]+),([0-9]+): ([0-9]+)x([0-9]+)')
+REGEX = re.compile(r'\d+')
 
 def readFile():
     try:
@@ -10,33 +9,27 @@ def readFile():
     finally:
         file.close()
 
-def markCloth(cloth, claim):
-    left = int(claim.group(2))
-    top = int(claim.group(3))
-    right = left + int(claim.group(4))
-    bottom = top + int(claim.group(5))
+def markCloth(cloth, left, top, width, height):
+    right = left + width
+    bottom = top + height
 
-    marked = 0
-    for row in range(top,bottom):
-        for col in range(left,right):
-            if (col,row) in cloth:
-                # Cell claimed before
-                if cloth[col,row]:
-                    # Count only once
-                    marked += 1
-                    cloth[col,row] = False
-            else:
-                cloth[col,row] = True
-    return marked
+    count = 0
+    for row in range(top, bottom):
+        for col in range(left, right):
+            if (row,col) not in cloth:
+                cloth[(row,col)] = True
+            elif cloth[(row,col)]:
+                count += 1
+                cloth[(row,col)] = False
+    return count
 
 def processClaims(claims):
     cloth = {}
-    overlap = 0
+    total = 0
     for line in claims:
-        claim = REGEX.search(line)
-        if claim:
-            overlap += markCloth(cloth, claim)
-    return overlap
+        id, left, top, width, height = map(int,REGEX.findall(line))
+        total += markCloth(cloth, left, top, width, height)
+    return total
 
 
 print(processClaims(readFile()))
