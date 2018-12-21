@@ -25,10 +25,9 @@ def diffExpected(id1, id2, expected = 1):
     return diff == expected
 
 def commonLetters(id1, id2):
-    return "".join([a if a == b else "" for a, b in zip(id1, id2)])
+    return ''.join([a for a, b in zip(id1, id2) if a == b])
 
 def findCommonId():
-
     ids = readFile()
     for id1, id2 in pairwise(sorted(ids)):
         if diffExpected(id1, id2):
