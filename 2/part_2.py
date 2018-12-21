@@ -8,8 +8,8 @@ def read_file():
 def find_matching_id():
     ids = read_file()
     trie = {}
-    for boxId in ids:
-        match = match_id(boxId, trie, False)
+    for id in ids:
+        match = match_id(id, trie, False)
         if match is not None:
             return match
 
