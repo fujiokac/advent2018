@@ -2,14 +2,14 @@ import re
 
 REGEX = re.compile(r'\d+')
 
-def readFile():
+def read_file():
     try:
         with open('input.txt','r') as file:
             return file.read().splitlines()
     finally:
         file.close()
 
-def markCloth(cloth, left, top, width, height):
+def mark_cloth(cloth, left, top, width, height):
     right = left + width
     bottom = top + height
 
@@ -23,13 +23,13 @@ def markCloth(cloth, left, top, width, height):
                 cloth[(row,col)] = False
     return count
 
-def processClaims(claims):
+def process_claims(claims):
     cloth = {}
     total = 0
     for line in claims:
         id, left, top, width, height = map(int,REGEX.findall(line))
-        total += markCloth(cloth, left, top, width, height)
+        total += mark_cloth(cloth, left, top, width, height)
     return total
 
 
-print(processClaims(readFile()))
+print(process_claims(read_file()))

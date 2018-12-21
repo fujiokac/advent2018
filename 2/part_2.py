@@ -1,27 +1,27 @@
-def readFile():
+def read_file():
     try:
         with open('input.txt','r') as file:
             return file.read().splitlines()
     finally:
         file.close()
 
-def findCommonId():
-    ids = readFile()
+def find_matching_id():
+    ids = read_file()
     trie = {}
     for boxId in ids:
-        match = matchId(boxId, trie, False)
+        match = match_id(boxId, trie, False)
         if match is not None:
             return match
 
-def matchId(boxId, trie, different):
+def match_id(id, trie, different):
     '''
         Parse IDs adding letters to trie
         Branches into alternate matching on first difference
         Otherwise returns None
     '''
-    if len(boxId) == 0:
+    if len(id) == 0:
         return None if different else ""
-    letter = boxId[0]
+    letter = id[0]
     if letter not in trie:
         # boxId is different from previous on this letter
         if different is None:
@@ -30,16 +30,16 @@ def matchId(boxId, trie, different):
         if not different:
             # No previous differences
             # Searching through other letters for a match with 0 tolerance
-            for otherLetter in trie:
-                match = matchId(boxId[1:], trie[otherLetter], None)
+            for other_letter in trie:
+                match = match_id(id[1:], trie[other_letter], None)
                 if match is not None:
                     return match
             different = True
         # Match not found, continuing to build data
         trie[letter] = {}
     # Continue matching/building data recursively
-    match = matchId(boxId[1:], trie[letter], different)
+    match = match_id(id[1:], trie[letter], different)
     return None if match is None else letter + match
 
 
-print(findCommonId())
+print(find_matching_id())

@@ -1,20 +1,20 @@
 from collections import Counter
 
-def readFile():
+def read_file():
     try:
         with open('input.txt','r') as file:
             return file.read().splitlines()
     finally:
         file.close()
 
-def checksum():
+def checksum(file):
     twos = 0
     threes = 0
-    for boxId in readFile():
-        counts = Counter(boxId).values()
+    for id in file:
+        counts = Counter(id).values()
         twos += 2 in counts
         threes += 3 in counts
 
     return twos * threes
 
-print(checksum())
+print(checksum(read_file()))
