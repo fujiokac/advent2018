@@ -1,4 +1,5 @@
 from collections import deque
+import string
 
 FILE = 'input.txt'
 
@@ -13,13 +14,14 @@ def parse_as_read():
     finally:
         file.close()
 
-    return polymer
+    return ''.join(polymer)
 
 def scan_polymer(polymer, unit):
+    if unit not in string.ascii_letters:
+        return
     if len(polymer) > 0 and polymer[-1] == unit.swapcase():
         polymer.pop()
     else:
         polymer.append(unit)
 
-polymer = ''.join(parse_as_read())
-print(len(polymer))
+print(len(parse_as_read()))
