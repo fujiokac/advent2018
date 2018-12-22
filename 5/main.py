@@ -1,4 +1,4 @@
-from collections import deque
+from collections import deque, Counter
 import string
 
 FILE = 'input.txt'
@@ -23,4 +23,13 @@ def scan(polymer, unit):
     else:
         polymer.append(unit)
 
-print(len(react_polymer(read_file()[0])))
+def minify(polymer, unit):
+    return react_polymer(polymer.replace(unit,'').replace(unit.swapcase(), ''))
+
+def analyze(polymer):
+    units = set(polymer.lower())
+    return min([len(minify(polymer, unit)) for unit in units])
+
+polymer = react_polymer(read_file()[0])
+print(len(polymer))
+print(analyze(polymer))
