@@ -4,6 +4,7 @@ import sys
 from collections import defaultdict, Counter
 
 FILE = sys.argv[1]
+MAX = int(sys.argv[2])
 REGEX = re.compile(r'\d+')
 
 def read_file():
@@ -37,6 +38,9 @@ def find_closest(points, point):
 	else:
 		return sorted_dist[0][0]
 
+def total_dist(points, point):
+	return sum([manhattan(point, points[p]) for p in points])
+
 def make_map(points, func):
 	dist_map = defaultdict(int)
 	x1, x2, y1, y2 = find_bounds(points)
@@ -52,19 +56,25 @@ def print_map(pmap, xmax):
 		if p[0] == xmax:
 			print()
 
-def part1_distances(points):
+def distances(points, func):
 	distances = []
 	x1, x2, y1, y2 = find_bounds(points)
 	for y in range(y1, y2+1):
 		for x in range(x1, x2+1):
-			distances.append(find_closest(points, (x,y)))
+			distances.append(func(points, (x,y)))
 	return Counter(distances)
 
-def part_1():
-	lines = sorted(read_file())
-	points = parse_points(lines)
-	print(part1_distances(points))
+def part_1(points):
+	print(distances(points, find_closest))
 	# dist_map = make_map(points, find_closest)
 	# print(Counter(dist_map.values()))
 
-part_1()
+def part_2(points):
+	dist = distances(points, total_dist)
+	print(sum([dist[total] for total in dist if total < MAX]))
+
+lines = sorted(read_file())
+points = parse_points(lines)
+
+part_1(points)
+part_2(points)
