@@ -50,7 +50,7 @@ def part2(prereqs):
 		# Check for completed tasks
 		complete = [elf for elf in elves if elves[elf] <= time]
 		for task in complete:
-			elves.pop(task)
+			elves.pop(task, None)
 		done += complete
 		todo -= set(complete)
 		working_elves = len(elves)
