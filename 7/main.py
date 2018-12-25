@@ -1,9 +1,14 @@
 import re
 import sys
-from collections import defaultdict
+import string
+from collections import defaultdict, Counter
+from itertools import chain
 
 FILE = sys.argv[1]
+WORKERS = int(sys.argv[2])
+INTERVAL = int(sys.argv[3])
 REGEX = re.compile(r' (\S) ')
+
 
 def read_file():
 	try:
@@ -13,23 +18,55 @@ def read_file():
 		file.close()
 
 def compile_instructions(lines):
-	steps = defaultdict(set)
+	prereqs = defaultdict(set)
 	for line in lines:
 		prereq, step = REGEX.findall(line)
-		steps[step].add(prereq)
-		if prereq not in steps:
-			steps[prereq] = set()
-	return steps
+		prereqs[step].add(prereq)
+		if prereq not in prereqs:
+			prereqs[prereq] = set()
+	return prereqs
 
-def step_order(steps):
+def get_next_step(prereqs, todo, done):
+	return min([step for step in todo if prereqs[step] <= done], default = None)
+
+def time_per_step(step):
+	return INTERVAL + 1 + string.ascii_uppercase.index(step)
+
+def part1(prereqs):
 	done = []
-	not_done = set(steps.keys())
-	while(len(not_done) > 0):
-		step = min([step for step in not_done if steps[step] <= set(done)])
+	todo = set(prereqs.keys())
+	while(len(todo) > 0):
+		step = get_next_step(prereqs, todo, set(done))
 		done += step
-		not_done.discard(step)
+		todo.discard(step)
 	return ''.join(done)
 
+def part2(prereqs):
+	done = []
+	todo = set(prereqs.keys())
+	time = 0
+	elves = {}
+	while(True):
+		complete = [elf for elf in elves if elves[elf] <= time]
+		for task in complete:
+			elves.pop(task)
+		done += complete
+		todo -= set(complete)
+		working_elves = len(elves)
+		if(len(todo) == 0 and working_elves == 0):
+			break
+		if working_elves < WORKERS:
+			completed = set(done)
+			for times in range(working_elves, WORKERS):
+				step = get_next_step(prereqs, todo - set(elves.keys()), completed)
+				if step is not None:
+					elves[step] = time + time_per_step(step)
+				else:
+					break
+		time += 1
+	return ''.join(done), time
+
 lines = read_file()
-steps = compile_instructions(lines)
-print(step_order(steps))
+prereqs = compile_instructions(lines)
+print(part1(prereqs))
+print(part2(prereqs))
