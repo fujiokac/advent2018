@@ -1,9 +1,6 @@
-import re
 import sys
-from itertools import chain
 
 FILE = sys.argv[1]
-REGEX = re.compile(r'(\d+)')
 
 def read_file():
 	try:
