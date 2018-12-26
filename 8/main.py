@@ -26,6 +26,15 @@ def sum_metadata(node):
 	return sum(metadata) + sum(sum_metadata(child) for child in children)
 
 
+def value_of(node):
+	children, metadata = node
+	if len(children) == 0:
+		return sum(metadata)
+	return sum(value_of(children[index-1]) for index in metadata if index > 0 and index <= len(children))
+
+
+
 file = parse_file(read_file())
 node = parse(file)
 print(sum_metadata(node))
+print(value_of(node))
